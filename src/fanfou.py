@@ -6,6 +6,9 @@
 #   2. 支持异步发送 (立即返回，使用系统提示)
 #   3. 支持读取新消息和提到自己的消息
 #   4. 支持回复和转发
+#   5. 支持管道输入（stdin）
+#   6. 寻找更加合适的存储密码方式（放弃keyring）
+#   7. 
 
 import sys
 import getpass
@@ -71,9 +74,9 @@ def get_filetype(filename):
 
 def print_usage():
     '''打印用法信息'''
-    print '用法：{0} 消息'.format(sys.argv[0])
-    print '  或：{0} 图片 [消息]'.format(sys.argv[0])
-    print '  或：{0} 消息文件'.format(sys.argv[0])
+    print '用法：$ {0} 消息'.format(sys.argv[0])
+    print '  或：$ {0} 图片 [消息]'.format(sys.argv[0])
+    print '  或：$ {0} 消息文件'.format(sys.argv[0])
     print '在饭否上发送消息或上传图片'
     print '对于最后一种，消息文件必须为文本文件，'
     print '文本文件中的每一行将作为一个消息被发送'

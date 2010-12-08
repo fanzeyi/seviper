@@ -9,6 +9,7 @@ import urllib2_file
 
 # 饭否API地址
 FANFOU_API = 'http://api2.fanfou.com/'
+SOURCE = 'seviper'
 
 # 定义错误
 class TooLongStatusError(Exception): pass
