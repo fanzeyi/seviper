@@ -17,7 +17,7 @@ class Fanfou:
     '''饭否接口类'''
 
     def __init__(self, username, password,
-            source='api', user_agent='libfanfou'):
+            source='api', user_agent='python-fanfou'):
         key = 'Basic ' + \
                 base64.b64encode('{0}:{1}'.format(username, password))
         opener = urllib2.build_opener()
@@ -57,7 +57,7 @@ class Fanfou:
             raise StatusTooLongError()
 
         # 发送
-        post_data = { 'status': text, 'source': SOURCE }
+        post_data = { 'status': text, 'source': self.source }
         post_data = urllib.urlencode(post_data)
         req = urllib2.Request(FANFOU_API + 'statuses/update.json', post_data)
         code, content = self.open_req(req)
@@ -68,7 +68,7 @@ class Fanfou:
     def upload(self, image, text=None):
         '''上传图片到饭否'''
         # 准备数据
-        post_data = { 'photo': open(image, 'rb'), 'source': SOURCE }
+        post_data = { 'photo': open(image, 'rb'), 'source': self.source }
         if text:
             post_data['status'] = text
 

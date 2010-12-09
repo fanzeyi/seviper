@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 # - * - coding: UTF-8 - * -
 
-# TODO:
-#   1. 支持短网址
-#   2. 支持异步发送 (立即返回，使用系统提示)
-#   3. 支持读取新消息和提到自己的消息
-#   4. 支持回复和转发
-
 import sys
 import getpass
 import keyring
@@ -14,9 +8,8 @@ import mimetypes
 import ConfigParser
 
 from os import path
+from fanfou import Fanfou, TooLongStatusError
 from termcolor import colored
-
-from fanfouclass import Fanfou, TooLongStatusError
 
 CONFIG_FILE = path.join(path.expanduser('~'), '.seviper')
 KEYRING_SERVICE = 'seviper'
@@ -83,12 +76,14 @@ def print_error_notice(*msgs):
     print >>sys.stderr, colored(msgs[0], 'red', attrs=['bold']),
     for msg in msgs:
         print >>sys.stderr, msg,
+    print
 
 def print_success_notice(*msgs):
     '''输出成功信息'''
     print >>sys.stderr, colored(msgs[0], 'green', attrs=['bold']),
     for msg in msgs[1:]:
         print >>sys.stderr, msg,
+    print
 
 def main():
     # 验证配置文件
@@ -99,7 +94,7 @@ def main():
     # 验证用户名密码
     while True:
         username, password = get_auth_info()
-        fanfou = Fanfou(username, password)
+        fanfou = Fanfou(username, password, SOURCE, USER_AGENT)
         if fanfou.verify():
             break
         print_error_notice('用户名或密码错误，请重新输入')
