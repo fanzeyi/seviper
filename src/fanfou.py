@@ -1,15 +1,6 @@
 #!/usr/bin/env python
 # - * - coding: UTF-8 - * -
 
-# TODO:
-#   1. 支持短网址
-#   2. 支持异步发送 (立即返回，使用系统提示)
-#   3. 支持读取新消息和提到自己的消息
-#   4. 支持回复和转发
-#   5. 支持管道输入（stdin）
-#   6. 寻找更加合适的存储密码方式（放弃keyring）
-#   7. 
-
 import sys
 import getpass
 import keyring
@@ -74,12 +65,13 @@ def get_filetype(filename):
 
 def print_usage():
     '''打印用法信息'''
-    print '用法：$ {0} 消息'.format(sys.argv[0])
-    print '  或：$ {0} 图片 [消息]'.format(sys.argv[0])
-    print '  或：$ {0} 消息文件'.format(sys.argv[0])
+    print '用法：{0} 消息'.format(sys.argv[0])
+    print '  或：{0} 图片 [消息]'.format(sys.argv[0])
+    print '  或：{0} 消息文件'.format(sys.argv[0])
     print '在饭否上发送消息或上传图片'
     print '对于最后一种，消息文件必须为文本文件，'
     print '文本文件中的每一行将作为一个消息被发送'
+    print '如果消息文件为“-”，则从标准输入中读取'
 
 def print_error_notice(*msgs):
     '''输出错误信息'''
@@ -122,6 +114,14 @@ def main():
                 print_error_notice('发送失败', *args)
                 return False
 
+    def send_lines_in_file(fp):
+        ret = True
+        for line in fp:
+            ret = send_and_notice(fanfou.update, line)
+            if not ret:
+                ret = False
+        return ret
+
     exit_code = 0
     # 获取参数
     if len(sys.argv) == 1:
@@ -130,7 +130,11 @@ def main():
     else:
         # 根据参数发送
         arg1 = sys.argv[1]
-        if path.exists(arg1):
+        if arg1 == '-':
+            ret = send_lines_in_file(sys.stdin)
+            if not ret:
+                exit_code = 1
+        elif path.exists(arg1):
             file_type = get_filetype(arg1)
             if file_type == 'image':
                 # 上传图片
@@ -140,8 +144,8 @@ def main():
                     exit_code = 1
             elif file_type == 'text':
                 # 消息文件
-                for line in open(arg1, 'r'):
-                    ret = send_and_notice(fanfou.update, line)
+                with open(arg1, 'r') as f:
+                    ret = send_lines_in_file(f)
                     if not ret:
                         exit_code = 1
             else:
