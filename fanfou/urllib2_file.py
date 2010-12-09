@@ -305,4 +305,3 @@ class newHTTPSHandler(newHTTPHandler):
         return self.do_open(httplib.HTTPS, req)
     
 urllib2.HTTPSHandler = newHTTPSHandler
-

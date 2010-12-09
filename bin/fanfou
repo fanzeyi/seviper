@@ -70,6 +70,7 @@ def print_usage():
     print '在饭否上发送消息或上传图片'
     print '对于最后一种，消息文件必须为文本文件，'
     print '文本文件中的每一行将作为一个消息被发送'
+    print '如果消息文件为“-”，则从标准输入中读取'
 
 def print_error_notice(*msgs):
     '''输出错误信息'''
@@ -114,6 +115,14 @@ def main():
                 print_error_notice('发送失败', *args)
                 return False
 
+    def send_lines_in_file(fp):
+        ret = True
+        for line in fp:
+            ret = send_and_notice(fanfou.update, line)
+            if not ret:
+                ret = False
+        return ret
+
     exit_code = 0
     # 获取参数
     if len(sys.argv) == 1:
@@ -122,7 +131,11 @@ def main():
     else:
         # 根据参数发送
         arg1 = sys.argv[1]
-        if path.exists(arg1):
+        if arg1 == '-':
+            ret = send_lines_in_file(sys.stdin)
+            if not ret:
+                exit_code = 1
+        elif path.exists(arg1):
             file_type = get_filetype(arg1)
             if file_type == 'image':
                 # 上传图片
@@ -132,8 +145,8 @@ def main():
                     exit_code = 1
             elif file_type == 'text':
                 # 消息文件
-                for line in open(arg1, 'r'):
-                    ret = send_and_notice(fanfou.update, line)
+                with open(arg1, 'r') as f:
+                    ret = send_lines_in_file(f)
                     if not ret:
                         exit_code = 1
             else:
