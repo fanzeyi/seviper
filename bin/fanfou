@@ -6,6 +6,7 @@ import getpass
 import keyring
 import mimetypes
 import ConfigParser
+import pynotify
 
 from os import path
 from fanfou import Fanfou, TooLongStatusError
@@ -17,12 +18,22 @@ VERSION = '0.1'
 SOURCE = 'seviper'
 USER_AGENT = 'seviper {0}'.format(VERSION)
 
+def notify_info(text,title='饭匙蛇',icon='emblem-favorite'):
+    '''使用Notify-osd提醒'''
+    pynotify.Notification(title,text,icon).show()
+
 def create_config():
     '''创建配置文件'''
     # 获取信息
     try:
         username = raw_input('用户名：')
+        #预检测
+        while len(username) < 4:
+            username = raw_input('用户名：')
         password = getpass.getpass('密码：')
+        use_notify = raw_input('是否使用notify-osd提醒(y/n)：')
+        while not(use_notify == 'y' or use_notify == 'n'):
+            use_notify = raw_input('是否使用notify-osd提醒(y/n)：')
     except KeyboardInterrupt:
         print
         exit(1)
@@ -34,6 +45,8 @@ def create_config():
     config = ConfigParser.RawConfigParser()
     config.add_section('Auth')
     config.set('Auth', 'username', username)
+    config.add_section('Other')
+    config.set('Other', 'use_notify', use_notify)
     with open(CONFIG_FILE, 'wb') as f:
         config.write(f)
 
@@ -54,6 +67,17 @@ def get_auth_info():
     
     # 获得用户名密码
     return username, password
+
+def get_other_cfg():
+    '''获得其他设置项目'''
+    config = ConfigParser.RawConfigParser()
+    config.read(CONFIG_FILE)
+    try:
+        use_notify = config.get('Other', 'use_notify')
+    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
+        return False
+    use_notify = use_notify == 'y'
+    return use_notify
 
 def get_filetype(filename):
     '''获取文件的类型'''
@@ -101,18 +125,30 @@ def main():
         print_error_notice('用户名或密码错误，请重新输入')
         create_config()
 
+    # 获取其他设置
+    use_notify = get_other_cfg()
+
     def send_and_notice(func, *args):
         try:
             ret = func(*args)
         except TooLongStatusError:
-            print_error_notice('错误', '消息超过140字')
+            if(use_notify):
+                notify_info('错误：消息超过140字！')
+            else :
+                print_error_notice('错误', '消息超过140字')
             return False
         else:
             if ret:
-                print_success_notice('发送成功', *args)
+                if(use_notify):
+                    notify_info('发送成功！')
+                else :
+                    print_success_notice('发送成功', *args)
                 return True
             else:
-                print_error_notice('发送失败', *args)
+                if(use_notify):
+                    notify_info('发送失败!')
+                else:
+                    print_error_notice('发送失败', *args)
                 return False
 
     def send_lines_in_file(fp):
@@ -151,7 +187,10 @@ def main():
                         exit_code = 1
             else:
                 # 错误
-                print_error_notice('错误', '未知的文件类型', arg1)
+                if(use_notify):
+                    notify_info('错误：未知的文件类型')
+                else:
+                    print_error_notice('错误', '未知的文件类型', arg1)
                 exit_code = 1
         else:
             # 发送单条消息
