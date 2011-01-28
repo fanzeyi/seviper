@@ -8,7 +8,7 @@ import urllib2
 import urllib2_file
 
 # 饭否API地址
-FANFOU_API = 'http://api2.fanfou.com/'
+FANFOU_API = 'http://api.fanfou.com/'
 
 # 定义错误
 class TooLongStatusError(Exception): pass

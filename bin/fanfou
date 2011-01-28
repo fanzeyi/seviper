@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # - * - coding: UTF-8 - * -
+''' Seviper '''
 
 import sys
 import getpass
@@ -18,9 +19,9 @@ VERSION = '0.1'
 SOURCE = 'seviper'
 USER_AGENT = 'seviper {0}'.format(VERSION)
 
-def notify_info(text,title='饭匙蛇',icon='emblem-favorite'):
+def notify_info(text, title='饭匙蛇', icon='emblem-favorite'):
     '''使用Notify-osd提醒'''
-    pynotify.Notification(title,text,icon).show()
+    pynotify.Notification(title, text, icon).show()
 
 def create_config():
     '''创建配置文件'''
@@ -98,19 +99,20 @@ def print_usage():
 
 def print_error_notice(*msgs):
     '''输出错误信息'''
-    print >>sys.stderr, colored(msgs[0], 'red', attrs=['bold']),
+    print >> sys.stderr, colored(msgs[0], 'red', attrs=['bold']), 
     for msg in msgs:
-        print >>sys.stderr, msg,
+        print >> sys.stderr, msg, 
     print
 
 def print_success_notice(*msgs):
     '''输出成功信息'''
-    print >>sys.stderr, colored(msgs[0], 'green', attrs=['bold']),
+    print >> sys.stderr, colored(msgs[0], 'green', attrs=['bold']), 
     for msg in msgs[1:]:
-        print >>sys.stderr, msg,
+        print >> sys.stderr, msg, 
     print
 
 def main():
+    ''' Main Function '''
     # 验证配置文件
     if not path.exists(CONFIG_FILE) or not get_auth_info():
         print >>sys.stderr, '请输入饭否的注册信息'
@@ -129,6 +131,7 @@ def main():
     use_notify = get_other_cfg()
 
     def send_and_notice(func, *args):
+        '''Send Message And Notice'''
         try:
             ret = func(*args)
         except TooLongStatusError:
@@ -152,6 +155,7 @@ def main():
                 return False
 
     def send_lines_in_file(fp):
+        ''' Sending File'''
         ret = True
         for line in fp:
             ret = send_and_notice(fanfou.update, line)
