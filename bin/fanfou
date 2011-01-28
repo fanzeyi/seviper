@@ -62,7 +62,10 @@ def get_auth_info():
         return False
 
     # 获得密码
-    password = keyring.get_password(KEYRING_SERVICE, username)
+    try:
+        password = keyring.get_password(KEYRING_SERVICE, username)
+    except ValueError:
+        return 1,1
     if password == None:
         return False
     
@@ -121,6 +124,9 @@ def main():
     # 验证用户名密码
     while True:
         username, password = get_auth_info()
+        if username == 1 and password == 1:
+            print "获取keyring认证失败"
+            return False
         fanfou = Fanfou(username, password, SOURCE, USER_AGENT)
         if fanfou.verify():
             break
