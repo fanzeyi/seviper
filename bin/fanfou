@@ -163,9 +163,25 @@ def main():
                 ret = False
         return ret
     
-    def handle_argv(argv):
+    def handle_argv(fanfou, args):
         '''处理参数'''
-        return 1
+        options = []
+        msg = []
+        accept = ['help', 'cc']
+        for arg in args:
+            if arg[0] == '-':
+                options.append(arg[1:])
+                if arg[1:] not in accept:
+                    print '错误的选项'
+                    return False
+            else:
+                msg.append(arg)
+        for option in options:
+            if option == 'help':
+                print_usage()
+                return True
+        send_and_notice(fanfou.update, ' '.join(msg))
+        return True
 
     exit_code = 0
     # 获取参数
@@ -180,7 +196,7 @@ def main():
             if not ret:
                 exit_code = 1
         elif arg1[0] == '-':
-            ret = handle_argv(sys.argv)
+            ret = handle_argv(fanfou, sys.argv[1:])
             if not ret:
                 exit_code = 1
         elif path.exists(arg1):
