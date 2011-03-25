@@ -9,5 +9,5 @@ setup(name='seviper',
       url='https://github.com/upsuper/seviper',
       packages=['fanfou'],
       py_modules=['termcolor'],
-      scripts=['bin/fanfou'],
+      scripts=['bin/fanfou', 'bin/fanfou-gui'],
       )

@@ -4,7 +4,7 @@
 
 import sys
 import getpass
-import keyring
+#import keyring
 import mimetypes
 import ConfigParser
 import pynotify
@@ -40,12 +40,13 @@ def create_config():
         exit(1)
 
     # 保存密码
-    keyring.set_password(KEYRING_SERVICE, username, password)
+    #keyring.set_password(KEYRING_SERVICE, username, password)
     
     # 保存配置文件
     config = ConfigParser.RawConfigParser()
     config.add_section('Auth')
     config.set('Auth', 'username', username)
+    config.set('Auth', 'password', password)
     config.add_section('Other')
     config.set('Other', 'use_notify', use_notify)
     with open(CONFIG_FILE, 'wb') as f:
@@ -58,14 +59,15 @@ def get_auth_info():
     config.read(CONFIG_FILE)
     try:
         username = config.get('Auth', 'username')
+        password = config.get('Auth', 'password')
     except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
         return False
 
     # 获得密码
-    try:
-        password = keyring.get_password(KEYRING_SERVICE, username)
-    except ValueError:
-        return 1,1
+#    try:
+#        password = keyring.get_password(KEYRING_SERVICE, username)
+#    except ValueError:
+#        return 1,1
     if password == None:
         return False
     
