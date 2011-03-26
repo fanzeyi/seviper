@@ -184,7 +184,7 @@ class Fanfou:
         
         # 验证字数限制
         if len(text.decode('utf8')) > 140:
-            raise StatusTooLongError()
+            raise TooLongStatusError()
 
         # 发送
         post_data = { 'status': text, 'source': self.source }
@@ -220,7 +220,7 @@ class Fanfou:
 
         # 验证字数限制
         if len(text.decode('utf8')) > 140:
-            raise StatusTooLongError()
+            raise TooLongStatusError()
         
         # 发送
         req = urllib2.Request(FANFOU_API + 'photos/upload.json', post_data)
