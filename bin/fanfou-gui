@@ -81,6 +81,7 @@ class Sendbox(Ui_MainWindow):
 			fanfou.update(text)
 		except TooLongStatusError:
 			print >>sys.stderr, "Error: Status is too long!"
+			pynotify.Notification('Seviper', 'Status is too long!').show()
 			return 0
 		else:
 			pynotify.Notification('Seviper', 'Status sent!').show()
