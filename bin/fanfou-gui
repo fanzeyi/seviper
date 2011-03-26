@@ -16,19 +16,19 @@ USER_AGENT = 'seviper {0}'.format(VERSION)
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.setWindowModality(QtCore.Qt.NonModal)
+        #MainWindow.setWindowModality(QtCore.Qt.NonModal)
         MainWindow.setEnabled(True)
         MainWindow.setMinimumSize(QtCore.QSize(391, 153))
         MainWindow.setMaximumSize(QtCore.QSize(391, 153))
         MainWindow.setBaseSize(QtCore.QSize(391, 135))
-        MainWindow.setMouseTracking(False)
-        MainWindow.setWindowOpacity(0.5)
-        MainWindow.setToolTip("")
+        #MainWindow.setMouseTracking(False)
+        #MainWindow.setWindowOpacity(0.5)
+        #MainWindow.setToolTip("")
         MainWindow.setLayoutDirection(QtCore.Qt.LeftToRight)
-        MainWindow.setAutoFillBackground(False)
-        MainWindow.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-        MainWindow.setDocumentMode(False)
-        MainWindow.setTabShape(QtGui.QTabWidget.Rounded)
+        #MainWindow.setAutoFillBackground(False)
+        #MainWindow.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        #MainWindow.setDocumentMode(False)
+        #MainWindow.setTabShape(QtGui.QTabWidget.Rounded)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.TextEdit = QtGui.QPlainTextEdit(self.centralwidget)
@@ -39,6 +39,9 @@ class Ui_MainWindow(object):
         self.pushButton.setGeometry(QtCore.QRect(290, 120, 90, 27))
         self.pushButton.setDefault(True)
         self.pushButton.setObjectName("pushButton")
+        self.send = QtGui.QShortcut(MainWindow)
+        self.send.setKey(QtGui.QKeySequence("Ctrl+Return"))
+		
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -69,7 +72,9 @@ def get_auth_info():
 class Sendbox(Ui_MainWindow):
 	def __init__(self, MainWindow, text = None):
 		self.setupUi(MainWindow)
+		self.shortcut = QtGui.QShortcut(QtGui.QKeySequence("Ctrl+C"), MainWindow, None, self.Submit)
 		QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL("clicked()"), self.Submit)
+		QtCore.QObject.connect(self.send, QtCore.SIGNAL("activated()"), self.Submit)
 		if text != None:
 			self.TextEdit.setPlainText(QtGui.QApplication.translate("MainWindow", text, None, QtGui.QApplication.UnicodeUTF8))
 	def Submit(self):
